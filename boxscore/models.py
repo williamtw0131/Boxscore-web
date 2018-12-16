@@ -66,3 +66,12 @@ class Boxscore(models.Model):
 
     def __str__(self):
         return self.team_name
+
+class Team(models.Model):
+    team_cap = models.CharField(max_length=30) # should be the user who create this
+    team_name_under_Team = models.CharField(max_length=30) # will be link to boxscore, maybe by primary key
+
+class Game(models.Model):
+    user_under_game = models.CharField(max_length=30)
+    us = models.CharField(max_length=30)
+    opponent = models.CharField(max_length=30)
