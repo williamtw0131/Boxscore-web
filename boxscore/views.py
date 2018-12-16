@@ -69,7 +69,7 @@ def add_stat(request):
         if Boxscore.objects.filter(user=user, team_name=team_name, opponent=opponent, player=player):
             team_options = Team.objects.filter(team_cap=user)
             game_list = Game.objects.filter(user_under_game=request.user)
-            return render(request, 'boxscore/add_stat.html', {'error': f"Stat of player #{player} at this match was added.", 'team_options': team_options, 'game_list': game_list})
+            return render(request, 'boxscore/add_stat.html', {'error': "Stat of player # %s at this match was added." % (player), 'team_options': team_options, 'game_list': game_list})
         fgm = request.POST.get('fgm')
         fga = request.POST.get('fga')
         threepm = request.POST.get('threepm')
@@ -120,7 +120,7 @@ def team_signup(request):
         if not team_name_under_Team:
             return render(request, 'boxscore/team_signup.html', {'error': "Please enter team name."})
         elif Team.objects.filter(team_cap=request.user, team_name_under_Team=team_name_under_Team):
-            return render(request, 'boxscore/team_signup.html', {'error': f"This name \'{team_name_under_Team}\' was already signed up by you."})
+            return render(request, 'boxscore/team_signup.html', {'error': "This name \'%s\' was already signed up by you." % (team_name_under_Team)})
         else:
             Team.objects.create(team_cap=request.user, team_name_under_Team=team_name_under_Team)
             return redirect('team_boxscore', team_name=team_name_under_Team)# render(request, 'boxscore/team_signup.html')
