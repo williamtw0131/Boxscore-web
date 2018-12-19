@@ -12,6 +12,7 @@
           <p><a href="/stat/search">#. Search for statics</a></p>
           <h4>All games stats of my teams:</h4>
           {% else %}
+          <p>Please login or sign up.</p>
           <p><a href="{% url 'login' %}">Login</a></p>
           <p><a href="/stat/register">Register</a></p>
           {% endif %}

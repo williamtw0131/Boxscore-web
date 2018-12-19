@@ -23,19 +23,28 @@ class Lifetime(models.Model):
     games = models.PositiveSmallIntegerField(default=1)
     @property
     def fgave(self):
-        fgave = self.fgm / self.fga * 100
-        fgave = "%.1f" % fgave
-        return fgave + "%"
+        if self.fga == 0:
+            return "0%"
+        else:
+            fgave = self.fgm / self.fga * 100
+            fgave = "%.1f" % fgave
+            return fgave + "%"
     @property
     def threepave(self):
-        threepave = self.threepm / self.threepa * 100
-        threepave = "%.1f" % threepave
-        return threepave + "%"
+        if self.threepa == 0:
+            return "0%"
+        else:
+            threepave = self.threepm / self.threepa * 100
+            threepave = "%.1f" % threepave
+            return threepave + "%"
     @property
     def ftave(self):
-        ftave = self.ftm / self.fta * 100
-        ftave = "%.1f" % ftave
-        return ftave + "%"
+        if self.fta == 0:
+            return "0%"
+        else:
+            ftave = self.ftm / self.fta * 100
+            ftave = "%.1f" % ftave
+            return ftave + "%"
     @property
     def orebave(self):
         orebave = self.oreb / self.games
@@ -107,21 +116,30 @@ class Boxscore(models.Model):
 
     @property
     def fgave(self):
-        fgave = self.fgm / self.fga * 100
-        fgave = "%.1f" % fgave
-        return fgave + "%"
+        if self.fga == 0:
+            return "0%"
+        else:
+            fgave = self.fgm / self.fga * 100
+            fgave = "%.1f" % fgave
+            return fgave + "%"
 
     @property
     def threepave(self):
-        threepave = self.threepm / self.threepa * 100
-        threepave = "%.1f" % threepave
-        return threepave + "%"
+        if self.threepa == 0:
+            return "0%"
+        else:
+            threepave = self.threepm / self.threepa * 100
+            threepave = "%.1f" % threepave
+            return threepave + "%"
 
     @property
     def ftave(self):
-        ftave = self.ftm / self.fta * 100
-        ftave = "%.1f" % ftave
-        return ftave + "%"
+        if self.fta == 0:
+            return "0%"
+        else:
+            ftave = self.ftm / self.fta * 100
+            ftave = "%.1f" % ftave
+            return ftave + "%"
 
     @property
     def reb(self):
