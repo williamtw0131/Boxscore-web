@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
-from .models import Boxscore, Team, Game
+from .models import Boxscore, Team, Game, Lifetime
 from .forms import BoxscoreForm
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
@@ -45,8 +45,9 @@ def team_boxscore(request, team_name):
     if not statics:
         statics = Team.objects.filter(team_cap=request.user).order_by('team_name_under_Team')
         return render(request, 'boxscore/add_game.html', {'statics': statics, 'succeed': "Successfully signed up a team. Now updates games for it."})
-    team_name = statics.values()[0]['team_name']
-    return render(request, 'boxscore/team_boxscore.html', {'statics': statics, 'team_name': team_name})
+    else:
+        team_name = statics.values()[0]['team_name']
+        return render(request, 'boxscore/team_boxscore.html', {'statics': statics, 'team_name': team_name})
 
 @login_required
 def match_boxscore(request, team_name, opponent):
@@ -76,6 +77,10 @@ def add_stat(request):
         threepa = request.POST.get('threepa')
         ftm = request.POST.get('ftm')
         fta = request.POST.get('fta')
+        if int(fgm) > int(fga) or int(threepm) > int(threepa) or int(ftm) > int(fta):
+            team_options = Team.objects.filter(team_cap=user)
+            game_list = Game.objects.filter(user_under_game=request.user)
+            return render(request, 'boxscore/add_stat.html', {'error': "Attempt shooting can't be more than make. Please try again.", 'team_options': team_options, 'game_list': game_list})
         oreb = request.POST.get('oreb')
         dreb = request.POST.get('dreb')
         ast = request.POST.get('ast')
@@ -85,6 +90,25 @@ def add_stat(request):
         pf = request.POST.get('pf')
         form = BoxscoreForm(request.POST)
         Boxscore.objects.create(user=user, team_name=team_name, opponent=opponent, player=player, fgm=fgm, fga=fga, threepm=threepm, threepa=threepa, ftm=ftm, fta=fta, oreb=oreb, dreb=dreb, ast=ast, stl=stl, blk=blk, tov=tov, pf=pf)
+        if Lifetime.objects.filter(user=user, team_name=team_name, player=player):
+            lifetime = Lifetime.objects.get(user=user, team_name=team_name, player=player)
+            lifetime.fgm += int(fgm)
+            lifetime.fga += int(fga)
+            lifetime.threepm += int(threepm)
+            lifetime.threepa += int(threepa)
+            lifetime.ftm += int(ftm)
+            lifetime.fta += int(fta)
+            lifetime.oreb += int(oreb)
+            lifetime.dreb += int(dreb)
+            lifetime.ast += int(ast)
+            lifetime.stl += int(stl)
+            lifetime.blk += int(blk)
+            lifetime.tov += int(tov)
+            lifetime.pf += int(pf)
+            lifetime.games += 1
+            lifetime.save()
+        else:
+            Lifetime.objects.create(user=user, team_name=team_name, player=player, fgm=fgm, fga=fga, threepm=threepm, threepa=threepa, ftm=ftm, fta=fta, oreb=oreb, dreb=dreb, ast=ast, stl=stl, blk=blk, tov=tov, pf=pf, games=1)
         return redirect('team_boxscore', team_name=team_name)
     else:
         team_options = Team.objects.filter(team_cap=request.user)
@@ -102,11 +126,11 @@ def search(request):
             return render(request, 'boxscore/search.html', {'statics': statics, 'matches':matches, 'error': "Please at least select a match or a team name or input a player number."})
         else:
             if not search_by_player:
-                statics = Boxscore.objects.filter(user=request.user, team_name=search_by_team_name).order_by('opponent')
+                statics = Boxscore.objects.filter(user=request.user, team_name=search_by_team_name).order_by('opponent', 'player')
             elif not search_by_team_name:
-                statics = Boxscore.objects.filter(user=request.user, player=search_by_player).order_by('player')
+                statics = Boxscore.objects.filter(user=request.user, player=search_by_player).order_by('opponent')
             else:
-                statics = Boxscore.objects.filter(user=request.user, team_name=search_by_team_name, player=search_by_player).order_by('player')
+                statics = Boxscore.objects.filter(user=request.user, team_name=search_by_team_name, player=search_by_player).order_by('opponent')
             return render(request, 'boxscore/result.html', {'statics': statics})
     else:
         statics = Team.objects.filter(team_cap=request.user).order_by('team_name_under_Team')
@@ -149,3 +173,9 @@ def add_game(request):
     else:
         statics = Team.objects.filter(team_cap=request.user).order_by('team_name_under_Team')
         return render(request, 'boxscore/add_game.html', {'statics': statics})
+
+
+@login_required
+def ave(request, team_name):
+    statics = Lifetime.objects.filter(user=request.user, team_name=team_name)
+    return render(request, 'boxscore/ave.html', {'statics': statics, 'team_name': team_name})

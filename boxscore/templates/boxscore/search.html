@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="header">
-    <p><a href="/stat/">This is a boxscore-Search for statics</a></p>
+    <p><a href="/">This is a boxscore-Search for statics</a></p>
 
     <p>Hi! {{ user.username }}</p>
     <p><a href="{% url 'logout' %}">Log out</a></p>
@@ -12,7 +12,7 @@
     <p>Searching...</p>
 </div>
 <form method="POST" action="{% url 'search' %}" class="search">{% csrf_token %}
-  
+
     <p><label>Search by team name:&nbsp</label>
       <select name="search_by_team_name">
         <option disabled selected value="">Team name</option>

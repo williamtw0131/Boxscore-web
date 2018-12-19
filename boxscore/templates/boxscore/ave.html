@@ -2,7 +2,7 @@
 
 {% block content %}
       <div class="header">
-          <p><a href="/">This is a boxscore-Homepage</a></p>
+          <p><a href="/">This is a boxscore-Average statics</a></p>
           {% if user.is_authenticated %}
           <p>Hi! {{ user.username }}</p>
           <p><a href="{% url 'logout' %}">Log out</a></p>
@@ -10,33 +10,19 @@
           <p><a href="{% url 'add_game' %}">Step2. Update games</a></p>
           <p><a href="{% url 'add_stat' %}">Step3. Add stat for a game</a></p>
           <p><a href="/stat/search">#. Search for statics</a></p>
-          <h4>All games stats of my teams:</h4>
+          <h4>Average statics of team {{ team_name }}</h4>
           {% else %}
           <p><a href="{% url 'login' %}">Login</a></p>
           <p><a href="/stat/register">Register</a></p>
           {% endif %}
       </div>
-      {% if succeed %}
-      <div class="succeed">
-        <strong><p>{{ succeed }}</p></strong>
-      </div>
-      {% endif %}
 
       <div style="overflow-x:auto;">
-          {% if my_statics %}
           <table style="width: 100%">
               <tr>
-                  <th>Match</th>
-                  <th>My team</th>
                   <th>Player number</th>
-                  <th>FGM</th>
-                  <th>FGA</th>
                   <th>FG%</th>
-                  <th>3PM</th>
-                  <th>3PA</th>
                   <th>3P%</th>
-                  <th>FTM</th>
-                  <th>FRA</th>
                   <th>FT%</th>
                   <th>OREB</th>
                   <th>DREB</th>
@@ -48,32 +34,23 @@
                   <th>PF</th>
                   <th>PTS</th>
               </tr>
-              {% for stat in my_statics %}
+              {% for stat in statics %}
               <tr>
-                  <td><a href="{% url 'match_boxscore' team_name=stat.team_name opponent=stat.opponent %}">{{ stat.team_name }} v.s. {{ stat.opponent }}</td>
-                  <td><a href="{% url 'ave' team_name=stat.team_name %}">{{ stat.team_name }}</td>
                   <td>{{ stat.player }}</td>
-                  <td>{{ stat.fgm }}</td>
-                  <td>{{ stat.fga }}</td>
                   <td>{{ stat.fgave }}</td>
-                  <td>{{ stat.threepm }}</td>
-                  <td>{{ stat.threepa }}</td>
                   <td>{{ stat.threepave }}</td>
-                  <td>{{ stat.ftm }}</td>
-                  <td>{{ stat.fta }}</td>
                   <td>{{ stat.ftave }}</td>
-                  <td>{{ stat.oreb }}</td>
-                  <td>{{ stat.dreb }}</td>
-                  <td>{{ stat.reb }}</td>
-                  <td>{{ stat.ast }}</td>
-                  <td>{{ stat.stl }}</td>
-                  <td>{{ stat.blk }}</td>
-                  <td>{{ stat.tov }}</td>
-                  <td>{{ stat.pf }}</td>
-                  <td>{{ stat.pts }}</td>
+                  <td>{{ stat.orebave }}</td>
+                  <td>{{ stat.drebave }}</td>
+                  <td>{{ stat.rebave }}</td>
+                  <td>{{ stat.astave }}</td>
+                  <td>{{ stat.stlave }}</td>
+                  <td>{{ stat.blkave }}</td>
+                  <td>{{ stat.tovave }}</td>
+                  <td>{{ stat.pfave }}</td>
+                  <td>{{ stat.ptsave }}</td>
               </tr>
               {% endfor %}
           </table>
-          {% endif %}
       </div>
 {% endblock %}

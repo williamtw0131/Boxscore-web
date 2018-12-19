@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="header">
-    <p><a href="/stat/">This is a boxscore-Step3. Add stat for a game</a></p>
+    <p><a href="/">This is a boxscore-Step3. Add stat for a game</a></p>
     <p>Hi! {{ user.username }}</p>
     <p><a href="{% url 'logout' %}">Log out</a></p>
     <p><a href="{% url 'team_signup' %}">Step1. Sign up a team</a></p>
@@ -63,7 +63,7 @@
             <td><input type="number" name="stl" size="number" value="0" min="0" max="99"></td>
             <td><input type="number" name="blk" size="number" value="0" min="0" max="99"></td>
             <td><input type="number" name="tov" size="number" value="0" min="0" max="99"></td>
-            <td><input type="number" name="pf" size="number" value="0" min="0" max="99"></td>
+            <td><input type="number" name="pf" size="number" value="0" min="0" max="5"></td>
         </tr>
     </table>
     {% if error %}
