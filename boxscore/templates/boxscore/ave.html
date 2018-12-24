@@ -10,7 +10,8 @@
           <p><a href="{% url 'add_game' %}">Step2. Update games</a></p>
           <p><a href="{% url 'add_stat' %}">Step3. Add stat for a game</a></p>
           <p><a href="/stat/search">#. Search for statics</a></p>
-          <h4>Average statics of team {{ team_name }}</h4>
+          <p><a href="{% url 'edit' %}">#. Edit statics</a></p>
+          <p>Average statics of team {{ team_name }}</p>
           {% else %}
           <p><a href="{% url 'login' %}">Login</a></p>
           <p><a href="/stat/register">Register</a></p>

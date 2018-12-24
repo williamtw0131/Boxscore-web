@@ -2,19 +2,13 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
+
 from .models import Boxscore, Team, Game, Lifetime
 from .forms import BoxscoreForm
 from django.contrib.auth.models import User
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
 
 # Create your views here.
-"""
-def login(request):
-    if request.method == "POST":
-        return render(request, 'boxscore/statics.html')
-    else:
-        return render(request, 'boxscore/login.html')
-"""
 def register(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -28,6 +22,8 @@ def register(request):
 
         else:
             user = User.objects.create_user(username, email, raw_password)
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
             return render(request, 'boxscore/statics.html', {'succeed': "Registered!"})
 
     else:
@@ -36,7 +32,7 @@ def register(request):
 def stat(request):
     game_list = Game.objects.filter(user_under_game=request.user)
     user_teams = Team.objects.filter(team_cap=request.user)
-    my_statics = Boxscore.objects.filter(user=request.user).order_by('opponent')
+    my_statics = Boxscore.objects.filter(user=request.user).order_by('opponent', 'player')
     return render(request, 'boxscore/statics.html', {'my_statics': my_statics})
 
 @login_required
@@ -88,7 +84,6 @@ def add_stat(request):
         blk = request.POST.get('blk')
         tov = request.POST.get('tov')
         pf = request.POST.get('pf')
-        form = BoxscoreForm(request.POST)
         Boxscore.objects.create(user=user, team_name=team_name, opponent=opponent, player=player, fgm=fgm, fga=fga, threepm=threepm, threepa=threepa, ftm=ftm, fta=fta, oreb=oreb, dreb=dreb, ast=ast, stl=stl, blk=blk, tov=tov, pf=pf)
         if Lifetime.objects.filter(user=user, team_name=team_name, player=player):
             lifetime = Lifetime.objects.get(user=user, team_name=team_name, player=player)
@@ -179,3 +174,39 @@ def add_game(request):
 def ave(request, team_name):
     statics = Lifetime.objects.filter(user=request.user, team_name=team_name)
     return render(request, 'boxscore/ave.html', {'statics': statics, 'team_name': team_name})
+
+@login_required
+def edit(request):
+    if request.method == "POST":
+        pk = request.POST.get('pk')
+        stat = Boxscore.objects.filter(pk=pk)
+        return render(request, 'boxscore/edit_stat.html', {'stat': stat})
+    else:
+        statics = Boxscore.objects.filter(user=request.user).order_by('opponent', 'player')
+        return render(request, 'boxscore/edit.html', {'statics': statics})
+
+@login_required
+def edit_stat(request, pk):
+    if request.method == "POST":
+        fgm = request.POST.get('fgm')
+        fga = request.POST.get('fga')
+        threepm = request.POST.get('threepm')
+        threepa = request.POST.get('threepa')
+        ftm = request.POST.get('ftm')
+        fta = request.POST.get('fta')
+        if int(fgm) > int(fga) or int(threepm) > int(threepa) or int(ftm) > int(fta):
+            stat = Boxscore.objects.filter(pk=pk).order_by('opponent', 'player')
+            return render(request, 'boxscore/edit_stat.html', {'error': "Attempt shooting can't be more than make. Please try again.", 'stat': stat})
+        old_stat = Boxscore.objects.filter(pk=pk)
+        oreb = request.POST.get('oreb')
+        dreb = request.POST.get('dreb')
+        ast = request.POST.get('ast')
+        stl = request.POST.get('stl')
+        blk = request.POST.get('blk')
+        tov = request.POST.get('tov')
+        pf = request.POST.get('pf')
+        old_stat.update(fgm=fgm, fga=fga, threepm=threepm, threepa=threepa, ftm=ftm, fta=fta, oreb=oreb, dreb=dreb, ast=ast, stl=stl, blk=blk, tov=tov, pf=pf)
+        return redirect('stat')
+    else:
+        stat = Boxscore.objects.filter(pk=pk).order_by('opponent', 'player')
+        return render(request, 'boxscore/edit_stat.html', {'stat': stat})
