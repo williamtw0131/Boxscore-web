@@ -35,7 +35,7 @@
         </tr>
         {% for stat in statics %}
         <tr>
-            <td><button type="submit" name="pk" value="{{ stat.pk }}"><a href="{% url 'edit_stat' pk=stat.pk %}">Edit</button></td>
+            <td><button type="submit" name="pk" value="{{ stat.pk }}"><a href="{% url 'edit_stat' pk=stat.pk team_name=stat.team_name player=stat.player %}">Edit</button></td>
             <td>{{ stat.team_name }} v.s {{ stat.opponent }}</td>
             <td>{{ stat.team_name }}</td>
             <td>{{ stat.player }}</td>
