@@ -2,21 +2,19 @@
 
 {% block content %}
 <div class="header">
-    <p><a href="/">This is a boxscore-Edit stats.</a></p>
+    <p><a href="/">This is a boxscore-Delete stats.</a></p>
     <p>Hi! {{ user.username }}</p>
     <p><a href="{% url 'logout' %}">Log out</a></p>
     <p><a href="{% url 'team_signup' %}">Step1. Sign up a team</a></p>
     <p><a href="{% url 'add_game' %}">Step2. Update games</a></p>
     <p><a href="{% url 'add_stat' %}">Step3. Add stat for a game</a></p>
     <p><a href="/stat/search">#. Search for statics</a></p>
-    <p>Select a stat to edit...</p>
+    <p>Deleting...</p>
 </div>
 <form class="stat_table" method="POST">{% csrf_token %}
   <div style="overflow-x:auto;">
     <table style="width: 100%;">
         <tr>
-            <th></th>
-            <th></th>
             <th>Game name</th>
             <th>Team name</th>
             <th>Player number</th>
@@ -34,10 +32,8 @@
             <th>TOV</th>
             <th>PF</th>
         </tr>
-        {% for stat in statics %}
+        {% for stat in stat %}
         <tr>
-            <td><button type="submit" name="pk" value="{{ stat.pk }}"><a href="{% url 'edit_stat' pk=stat.pk team_name=stat.team_name player=stat.player %}">Edit</button></td>
-            <td><button type="submit" name="pk" value="{{ stat.pk }}"><a href="{% url 'delete' pk=stat.pk team_name=stat.team_name player=stat.player %}">delete</button></td>
             <td>{{ stat.team_name }} v.s {{ stat.opponent }}</td>
             <td>{{ stat.team_name }}</td>
             <td>{{ stat.player }}</td>
@@ -57,6 +53,7 @@
         </tr>
         {% endfor %}
     </table>
+    <button type="submit" name="button" class="submit_button">Delete</button>
   </div>
 </form>
 {% endblock %}

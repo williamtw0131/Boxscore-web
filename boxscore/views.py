@@ -29,7 +29,7 @@ def register(request):
 
 @login_required
 def stat(request):
-    my_statics = Boxscore.objects.filter(user=request.user).order_by('opponent', 'player') # all of the statistics under this user
+    my_statics = Boxscore.objects.filter(user=request.user).order_by('team_name', 'opponent', 'player') # all of the statistics under this user
     return render(request, 'boxscore/statics.html', {'my_statics': my_statics})
 
 @login_required
@@ -177,6 +177,31 @@ def edit(request):
     else:
         statics = Boxscore.objects.filter(user=request.user).order_by('opponent', 'player')
         return render(request, 'boxscore/edit.html', {'statics': statics})
+
+@login_required
+def delete(request, pk, team_name, player):
+    if request.method == "POST":
+        old_stat = Boxscore.objects.filter(pk=pk)
+        lifetime = Lifetime.objects.filter(user=request.user, team_name=team_name, player=player)
+        new_fgm = lifetime.values()[0]['fgm'] - old_stat.values()[0]['fgm']
+        new_fga = lifetime.values()[0]['fga'] - old_stat.values()[0]['fga']
+        new_threepm = lifetime.values()[0]['threepm'] - old_stat.values()[0]['threepm']
+        new_threepa = lifetime.values()[0]['threepa'] - old_stat.values()[0]['threepa']
+        new_ftm = lifetime.values()[0]['ftm'] - old_stat.values()[0]['ftm']
+        new_fta = lifetime.values()[0]['fta'] - old_stat.values()[0]['fta']
+        new_oreb = lifetime.values()[0]['oreb'] - old_stat.values()[0]['oreb']
+        new_derb = lifetime.values()[0]['dreb'] - old_stat.values()[0]['dreb']
+        new_ast = lifetime.values()[0]['ast'] - old_stat.values()[0]['ast']
+        new_stl = lifetime.values()[0]['stl'] - old_stat.values()[0]['stl']
+        new_blk = lifetime.values()[0]['blk'] - old_stat.values()[0]['blk']
+        new_tov = lifetime.values()[0]['tov'] - old_stat.values()[0]['tov']
+        new_pf = lifetime.values()[0]['pf'] - old_stat.values()[0]['pf']
+        old_stat.delete()
+        lifetime.update(fgm=new_fgm, fga=new_fga, threepm=new_threepm, threepa=new_threepa, ftm=new_ftm, fta=new_fta, oreb=new_oreb, dreb=new_derb, ast=new_ast, stl=new_stl, blk=new_blk, tov=new_tov, pf=new_pf)
+        return redirect('stat')
+    else:
+        stat = Boxscore.objects.filter(pk=pk).order_by('opponent', 'player')
+        return render(request, 'boxscore/delete.html', {'stat': stat})
 
 @login_required
 def edit_stat(request, pk, team_name, player):

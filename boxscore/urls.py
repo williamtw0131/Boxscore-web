@@ -14,4 +14,5 @@ urlpatterns = [
     path('stat/<team_name>ave', views.ave, name='ave'),
     path('stat/edit', views.edit, name='edit'),
     path('stat/edit_stat<pk>_<team_name>_<player>', views.edit_stat, name='edit_stat'),
+    path('stat/delete<pk>_<team_name>_<player>', views.delete, name='delete'),
 ]
